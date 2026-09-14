@@ -104,6 +104,8 @@ class PermissionTestCase(unittest.TestCase):
         permission. Nothing under Files and Folders covers it, so advice
         pointing there is advice to look for a row that never appears.
         """
+        if sys.platform != "darwin":
+            self.skipTest("macOS-specific wording")
         path = Path.home() / "Library/CloudStorage/SynologyDrive-on_demand/tg"
         message = explain_denial(path)
         self.assertIn("Synology Drive", message)
