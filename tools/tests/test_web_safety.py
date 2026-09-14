@@ -158,6 +158,28 @@ class LoadsNothingElseTestCase(unittest.TestCase):
             self.assertNotIn("innerHTML", read(APP_DIR / "app" / name))
 
 
+class HelpLinksTestCase(unittest.TestCase):
+    """The guide links on the welcome screen must actually reach the guide.
+
+    The service worker was serving folder-style links (help/) as the main app,
+    so "How to export" looked broken. These pin the fix and the anchors it
+    depends on.
+    """
+
+    def test_service_worker_serves_a_folder_as_its_index_page(self) -> None:
+        worker = read(APP_DIR / "sw.js")
+        self.assertIn("file.endsWith('/')", worker,
+                      "sw.js must turn help/ into help/index.html")
+
+    def test_the_guide_has_the_anchors_the_welcome_screen_points_at(self) -> None:
+        boot = read(APP_DIR / "app" / "web" / "boot.js")
+        guide = read(APP_DIR / "help" / "index.html")
+        for target in re.findall(r"help/#([a-z]+)", boot):
+            with self.subTest(anchor=target):
+                self.assertIn(f'id="{target}"', guide,
+                              f'the guide has no section "#{target}"')
+
+
 class SiteConfigTestCase(unittest.TestCase):
     """site-config.json is edited by hand on GitHub; a mistake must be caught."""
 

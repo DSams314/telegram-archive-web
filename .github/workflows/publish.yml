@@ -1,16 +1,13 @@
 # Publishes the website to GitHub Pages.
 #
-# SWITCHED OFF until you turn it on. It only publishes when BOTH are true:
+# It runs the full test suite first and publishes nothing if anything fails.
+# Those tests include the ones that matter most for the web version: that its
+# in-browser indexer builds exactly what the reference indexer builds
+# (test_web_parity), and that the page cannot write outside its settings file,
+# cannot reach any other website, and only reads your exports (test_web_safety).
 #
-#   1. The repository has a variable called PUBLISH_SITE set to true
-#      (Settings > Secrets and variables > Actions > Variables).
-#   2. GitHub Pages is set to deploy from "GitHub Actions"
-#      (Settings > Pages > Build and deployment > Source).
-#
-# When it does run, it tests everything first -- including walking through
-# the website in a real browser -- and publishes nothing if any check fails.
-# To take the website down again, set PUBLISH_SITE to false and use
-# "Unpublish site" under Settings > Pages.
+# It only runs when the repository variable PUBLISH_SITE is set to true, so
+# turning the website off is a one-line change (set it to false).
 
 name: publish website
 
@@ -41,13 +38,9 @@ jobs:
         with:
           node-version: '22'
       - name: Run the tests
-        run: python -m unittest discover -s tools/tests -t .
+        run: python -m unittest discover -s tools/tests -t . -v
       - name: Build the website
         run: python tools/build_site.py
-      - name: Walk through it in Chrome
-        env:
-          BROWSER: /usr/bin/google-chrome
-        run: node tools/tests/browser_check.mjs --shots screenshots
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site

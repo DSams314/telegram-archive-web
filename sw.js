@@ -109,6 +109,10 @@ self.addEventListener('fetch', (event) => {
 async function fromShell(request, path) {
   const files = await shell();
   let file = path === '' ? 'index.html' : path;
+  // A folder-style link (help/, and the root) means that folder's index page.
+  // Without this, clicking "How to export" served the main app instead of the
+  // guide -- the guide link looked broken.
+  if (file.endsWith('/')) file += 'index.html';
   if (request.mode === 'navigate' && !files.has(file)) file = 'index.html';
   if (!files.has(file)) return refuse();
 
