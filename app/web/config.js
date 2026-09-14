@@ -21,7 +21,27 @@ let state = 'clean';                    // clean | dirty | saving
 let problem = null;                     // why the last save failed, if it did
 let timer = 0;
 let leaving = false;
+let demoMode = false;
 const listeners = new Set();
+
+export const isDemo = () => demoMode;
+
+/**
+ * Load a temporary demo archive that is never written anywhere.
+ *
+ * In demo mode saving is switched off entirely: changing a setting updates
+ * what is on screen but touches no file, no folder, and no download. Leaving
+ * the demo (a reload) drops all of it.
+ */
+export function enterDemo(demoData) {
+  demoMode = true;
+  data = { ...blank(), ...demoData };
+  savedCanonical = canonical(data);
+  state = 'clean';
+  problem = null;
+  emit();
+  return data;
+}
 
 export function blank() {
   return {
@@ -91,6 +111,7 @@ export function subscribe(fn) {
 }
 
 export function isDirty() {
+  if (demoMode) return false;   // there is nothing in a demo worth saving
   return canonical(data) !== savedCanonical;
 }
 
@@ -155,6 +176,11 @@ async function cache() {
 
 /** Change the config. Saves itself where it can; is marked unsaved where not. */
 export function update(change) {
+  if (demoMode) {          // apply on screen, but never persist or download
+    change(data);
+    emit();
+    return;
+  }
   change(data);
   touched = Date.now();
   cache();
@@ -175,6 +201,7 @@ export function update(change) {
  * the same file, for putting back into the folder by hand.
  */
 export async function save({ auto = false } = {}) {
+  if (demoMode) return true;   // a demo has nothing to save
   clearTimeout(timer);
   const stamp = new Date().toISOString();
 

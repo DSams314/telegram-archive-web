@@ -15,6 +15,7 @@ import * as state from '../state.js';
 import * as splash from '../splash.js';
 import * as log from '../log.js';
 import * as setup from '../setup.js';
+import * as demo from './demo.js';
 import { loadManifest } from '../api.js';
 import { logoSVG } from '../logo.js';
 import { privacyStatement } from '../privacy.js';
@@ -142,10 +143,14 @@ function chooser() {
       : await folder.pickWithInput();
     if (choice) await openFolder(choice);
   });
+  const tryDemo = button('Try a demo instead', 'ghost', () => enterDemo());
+  tryDemo.classList.add('gate-demo');
   wrap.append(
     pick,
     el('p', { className: 'gate-drop', textContent: 'or drag the folder onto this window' }),
     el('p', { className: 'su-note', textContent: browserNote() }),
+    el('p', { className: 'gate-or', textContent: 'No exports yet? Look around an example first.' }),
+    tryDemo,
   );
   return wrap;
 }
@@ -252,6 +257,39 @@ function showReadyForExports() {
         await ensureIndexThenBoot();
       })),
   );
+}
+
+// ---- the demo --------------------------------------------------------------------
+
+/**
+ * Load the built-in example archive. It opens like a folder you picked, so it
+ * runs through the same indexer and viewer -- but it is marked as a demo, so
+ * nothing is saved and nothing touches your disk.
+ */
+async function enterDemo() {
+  showBusy('Loading the demo…');
+  try {
+    const { name, entries, config: demoConfig } = await demo.buildDemoArchive();
+    await folder.open({ kind: 'files', name, entries });
+    config.enterDemo(demoConfig);
+    state.adopt(demoConfig.settings);
+    log.info('demo.entered');
+    await ensureIndexThenBoot();
+    showDemoBar();
+  } catch (error) {
+    log.warn('demo.failed', { reason: error?.message ?? null });
+    showFailed('The demo could not be loaded. Try reloading the page.');
+  }
+}
+
+/** A pill over the app while the demo is open, with the way back out. */
+function showDemoBar() {
+  if (document.getElementById('demo-bar')) return;
+  const bar = el('div', { id: 'demo-bar' },
+    el('span', { className: 'demo-label' },
+      'Demo — an example archive. Nothing here is yours, and nothing is saved.'),
+    button('Exit demo', 'primary', () => location.reload()));
+  document.body.append(bar);
 }
 
 // ---- opening the folder ---------------------------------------------------------

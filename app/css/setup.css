@@ -588,3 +588,39 @@
   text-align: left;
 }
 .sp-actions { gap: 8px; }
+
+/* ---- the demo: a button on the welcome screen, a pill while it is open ---- */
+
+.gate-or {
+  margin: 18px 0 6px;
+  font-size: 12.5px;
+  color: var(--text-faint);
+  text-align: center;
+}
+.gate-demo { align-self: center; }
+
+#demo-bar {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 95;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: min(560px, calc(100vw - 24px));
+  padding: 6px 6px 6px 16px;
+  border-radius: 999px;
+  background: var(--panel-solid);
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.4);
+  animation: cm-in var(--dur) var(--spring);
+}
+#demo-bar .demo-label {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#demo-bar .su-btn { padding: 6px 14px; font-size: 13px; flex: none; }
