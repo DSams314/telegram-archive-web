@@ -1,0 +1,590 @@
+/* First-run setup: a single centred card over the wallpaper. */
+
+#setup,
+#gate {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: color-mix(in srgb, var(--bg-app) 55%, transparent);
+  backdrop-filter: blur(26px) saturate(1.3);
+  -webkit-backdrop-filter: blur(26px) saturate(1.3);
+}
+
+.su-card {
+  width: min(560px, 100%);
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 30px 22px;
+  border-radius: 20px;
+  background: var(--panel-solid);
+  border: 1px solid var(--line);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
+}
+
+.su-pane { display: flex; flex-direction: column; min-height: 0; }
+.su-welcome { text-align: center; align-items: center; }
+
+.su-logo { width: 84px; height: 84px; margin-bottom: 18px; }
+.su-logo svg { width: 100%; height: 100%; }
+.su-welcome .su-logo svg { color: var(--accent); }
+
+.su-head h1 {
+  margin: 0 0 8px;
+  font-size: 23px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+.su-head p {
+  margin: 0 0 20px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+.su-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+.su-welcome .su-actions { justify-content: center; }
+
+.su-btn {
+  border: 0;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 22px;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--spring-fast),
+              transform var(--dur-fast) var(--spring-fast);
+}
+.su-btn:active { transform: scale(0.97); }
+.su-btn.primary { background: var(--accent); color: var(--on-accent); }
+.su-btn.primary:disabled { opacity: 0.6; cursor: default; }
+.su-btn.ghost { background: var(--panel-hover); color: var(--text); }
+
+/* ---- folder picker ------------------------------------------------------ */
+
+.su-path { margin-bottom: 10px; }
+.su-path input,
+.su-fields input,
+.su-help input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--panel-hover);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  padding: 9px 11px;
+  outline: none;
+}
+.su-path input:focus,
+.su-fields input:focus,
+.su-help input:focus { border-color: var(--accent); }
+
+.su-browser {
+  flex: 1;
+  min-height: 180px;
+  max-height: 280px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 5px;
+}
+.su-dir {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+.su-dir:hover { background: var(--panel-hover); }
+.su-dir.up { color: var(--text-dim); font-size: 12px; }
+.su-dir.has-export { font-weight: 500; }
+.su-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  color: var(--accent);
+}
+.su-note {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.45;
+}
+
+/* ---- identity ----------------------------------------------------------- */
+
+.su-peers {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 240px;
+  overflow-y: auto;
+  margin-bottom: 14px;
+}
+.su-peer {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  text-align: left;
+  border: 1px solid transparent;
+  background: var(--panel-hover);
+  color: var(--text);
+  font: inherit;
+  padding: 9px 11px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--spring-fast);
+}
+.su-peer.on { border-color: var(--accent); }
+.su-peer b { display: block; font-size: 14px; font-weight: 550; }
+.su-peer span { display: block; font-size: 12px; color: var(--text-dim); }
+
+.su-fields { display: flex; flex-direction: column; gap: 10px; }
+.su-photo { display: flex; align-items: center; gap: 12px; }
+
+.su-help { margin-top: 14px; }
+.su-help summary {
+  font-size: 13px;
+  color: var(--accent);
+  cursor: pointer;
+  list-style: none;
+}
+.su-help summary::-webkit-details-marker { display: none; }
+.su-help p {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  margin: 8px 0;
+}
+
+/* ---- progress dots ------------------------------------------------------ */
+
+.su-dots {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 18px;
+}
+.su-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  opacity: 0.4;
+  transition: opacity var(--dur) var(--spring), background var(--dur) var(--spring);
+}
+.su-dot.on { background: var(--accent); opacity: 1; }
+
+/* ---- avatar editing (profile panel) ------------------------------------- */
+
+.pf-avatar-edit {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  border-radius: 50%;
+}
+.pf-avatar-edit::after {
+  content: "Change";
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 5px 0 7px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--spring-fast);
+  border-radius: 0 0 999px 999px;
+}
+.pf-avatar-edit:hover::after { opacity: 1; }
+
+/* ---- shutdown confirmation ---------------------------------------------- */
+
+#shutdown {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: cm-in var(--dur) var(--spring);
+}
+.sd-card {
+  width: min(400px, 100%);
+  padding: 26px 26px 20px;
+  border-radius: 18px;
+  text-align: center;
+  background: var(--panel-solid);
+  border: 1px solid var(--line);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.45);
+}
+.sd-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 14px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, #e2564d 18%, transparent);
+  color: #e2564d;
+}
+.sd-icon svg { width: 24px; height: 24px; }
+.sd-card h2 { margin: 0 0 8px; font-size: 18px; font-weight: 600; }
+.sd-card p {
+  margin: 0 0 20px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+.sd-card code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.92em;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--panel-hover);
+}
+.sd-actions { display: flex; gap: 8px; justify-content: center; }
+.sd-btn {
+  border: 0;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 22px;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--spring-fast);
+}
+.sd-btn:active { transform: scale(0.97); }
+.sd-btn.ghost { background: var(--panel-hover); color: var(--text); }
+.sd-btn.danger { background: #e2564d; color: #fff; }
+
+/* The mark, once the server is down. */
+.sd-logo { margin: 0 auto 14px; width: 56px; height: 56px; }
+.sd-logo svg { display: block; }
+
+/* ---- picture cropper ---------------------------------------------------- */
+
+#cropper {
+  position: fixed;
+  inset: 0;
+  z-index: 96;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: cm-in var(--dur) var(--spring);
+}
+.cr-card {
+  padding: 24px;
+  border-radius: 18px;
+  text-align: center;
+  background: var(--panel-solid);
+  border: 1px solid var(--line);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.45);
+}
+.cr-card h2 { margin: 0 0 5px; font-size: 17px; font-weight: 600; }
+.cr-card p { margin: 0 0 16px; font-size: 12.5px; color: var(--text-dim); }
+
+.cr-stage {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--panel-hover);
+  cursor: grab;
+  touch-action: none;      /* pointer events drive the pan, not the browser */
+}
+.cr-stage:active { cursor: grabbing; }
+.cr-canvas { display: block; }
+
+/* The circle is drawn as a ring of shadow, so the area outside it dims
+   without a second element covering the image. */
+.cr-mask {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.45);
+  -webkit-mask: radial-gradient(circle at center,
+                transparent 0 149px, #000 150px);
+  mask: radial-gradient(circle at center, transparent 0 149px, #000 150px);
+}
+.cr-mask::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.85);
+}
+
+.cr-zoom {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0 18px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.cr-zoom input { flex: 1; accent-color: var(--accent); }
+
+.cr-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.cr-btn {
+  border: 0;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--spring-fast);
+}
+.cr-btn:active { transform: scale(0.97); }
+.cr-btn.ghost { background: var(--panel-hover); color: var(--text); }
+.cr-btn.primary { background: var(--accent); color: var(--on-accent); }
+
+/* ---- folder picker ------------------------------------------------------ */
+
+#picker {
+  position: fixed;
+  inset: 0;
+  z-index: 97;              /* above the settings panel that opens it */
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: cm-in var(--dur) var(--spring);
+}
+.pk-card {
+  width: min(620px, 100%);
+  padding: 22px 22px 18px;
+  border-radius: 18px;
+  background: var(--panel-solid);
+  border: 1px solid var(--line);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.45);
+}
+.pk-card h2 { margin: 0 0 4px; font-size: 17px; font-weight: 600; }
+.pk-help { margin: 0 0 14px; font-size: 13px; color: var(--text-dim); }
+
+.pk-body { display: flex; gap: 12px; align-items: stretch; }
+.pk-places {
+  width: 172px;
+  flex: none;
+  overflow-y: auto;
+  max-height: 300px;
+  padding-right: 4px;
+  border-right: 1px solid var(--line);
+}
+.pk-main { flex: 1; min-width: 0; }
+
+.pk-path {
+  margin-bottom: 8px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: var(--panel-hover);
+  font-size: 12px;
+  color: var(--text-dim);
+  /* A long path must wrap rather than stretch the dialog. */
+  overflow-wrap: anywhere;
+}
+.pk-list { max-height: 260px; min-height: 200px; }
+
+/* Name takes the slack so badges stay hard right. */
+.pk-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.pk-icon { flex: none; width: 16px; height: 16px; opacity: 0.65; display: grid; place-items: center; }
+.pk-icon svg { width: 16px; height: 16px; }
+.pk-kind {
+  flex: none;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--panel-hover);
+  color: var(--text-dim);
+}
+.pk-place.here { background: var(--panel-hover); }
+.pk-error { color: #e2564d; white-space: pre-wrap; }
+
+.pk-volume {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--text-dim);
+  min-height: 1em;
+}
+.pk-actions { justify-content: flex-end; margin-top: 12px; }
+.sd-btn.accent { background: var(--accent); color: #fff; }
+
+@media (max-width: 620px) {
+  .pk-body { flex-direction: column; }
+  .pk-places {
+    width: auto;
+    max-height: 96px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    padding: 0 0 6px;
+  }
+}
+
+/* ---- loading screen ----------------------------------------------------- */
+
+#splash {
+  position: fixed;
+  inset: 0;
+  z-index: 98;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--bg, #10131a);
+  animation: cm-in var(--dur) var(--spring);
+}
+.sp-card {
+  width: min(420px, 100%);
+  padding: 30px 28px 24px;
+  border-radius: 18px;
+  text-align: center;
+  background: var(--panel-solid);
+  border: 1px solid var(--line);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.45);
+}
+.sp-logo { width: 64px; height: 64px; margin: 0 auto 16px; }
+.sp-logo svg { display: block; }
+.sp-card h2 { margin: 0 0 6px; font-size: 17px; font-weight: 600; }
+.sp-what {
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: var(--text-dim);
+  min-height: 1.3em;
+  overflow-wrap: anywhere;
+}
+.sp-track {
+  height: 5px;
+  border-radius: 999px;
+  background: var(--panel-hover);
+  overflow: hidden;
+}
+.sp-bar {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width var(--dur) var(--spring);
+}
+/* Before there is a count to show, motion says "working" where 0% says "stuck". */
+.sp-bar.sweeping {
+  width: 35%;
+  animation: sp-sweep 1.4s ease-in-out infinite;
+}
+@keyframes sp-sweep {
+  0%   { transform: translateX(-110%); }
+  100% { transform: translateX(320%); }
+}
+.sp-note {
+  margin: 16px 0 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--text-faint);
+}
+.sp-card.failed .sp-what {
+  color: var(--text);
+  text-align: left;
+  white-space: pre-wrap;
+  font-size: 12.5px;
+}
+.sp-actions { margin-top: 16px; display: flex; justify-content: center; }
+
+/* ---- the website's front door: welcome, folder, reconnect ---------------- */
+
+#gate { z-index: 91; }
+.gate-card { overflow-y: auto; }
+.gate-card > .su-logo { align-self: center; }
+.gate-card > .su-head { text-align: center; }
+#gate.dropping .gate-card {
+  outline: 2px dashed var(--accent);
+  outline-offset: 6px;
+}
+.gate-choose {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin-top: 18px;
+  text-align: center;
+}
+.gate-drop { margin: 8px 0 0; font-size: 12px; color: var(--text-faint); }
+.gate-guides { margin-top: 16px; font-size: 13px; line-height: 1.5; }
+.gate-guides ol { margin: 6px 0 0; padding-left: 20px; }
+.gate-guides li { margin: 4px 0; }
+.gate-link { color: var(--accent); text-decoration: none; white-space: nowrap; }
+.gate-link:hover { text-decoration: underline; }
+.gate-message {
+  margin: 0 0 6px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.gate-privacy summary {
+  margin-top: 18px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+/* The privacy statement, on the welcome screen and at the bottom of Settings. */
+.privacy {
+  margin-top: 8px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--panel-hover);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  text-align: left;
+}
+.privacy h3 { margin: 0 0 6px; font-size: 13px; color: var(--text); letter-spacing: 0; text-transform: none; }
+.privacy ul { margin: 0; padding-left: 18px; }
+.privacy li { margin: 5px 0; }
+.privacy b { color: var(--text); font-weight: 600; }
+
+/* The loading screen's "still waiting" line and its buttons. */
+.sp-stall {
+  margin: 12px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #e0a33a;
+  text-align: left;
+}
+.sp-actions { gap: 8px; }

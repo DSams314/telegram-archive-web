@@ -1,0 +1,22 @@
+# Everything generated on a machine, or belonging to whoever is using it.
+#
+# data/ is the whole of the program's local state: the index, the config, the
+# uploaded pictures, and the logs. None of it belongs in the repository, and
+# some of it is personal.
+data/
+dist/
+# The built website; made fresh by tools/build_site.py.
+site/
+
+# The archive itself, if anyone ever puts one beside the program.
+Backups/
+
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+launch.log
+
+# The build machine's signing material, if self-signing is ever set up.
+*.p12
+*.cer

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Telegram Archive
+Comment=Offline reader for your Telegram chat exports
+Exec=sh -c 'cd "$(dirname "%k")" && python3 -m tools.tgindex; exec python3 serve.py'
+Path=.
+Icon=telegram-archive
+Terminal=false
+Categories=Utility;Archiving;

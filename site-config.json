@@ -1,0 +1,12 @@
+{
+  "_how_to_edit": "Edit this file on GitHub to update the fund panel at the top of Settings. 'raised' and 'goal' are US dollars (numbers only, no $ sign). Put your donation page in 'donate_url'; it must start with https:// or it is ignored. Set 'show' to false to hide the panel entirely.",
+  "fund": {
+    "show": true,
+    "title": "Apple Developer License Fund",
+    "subtitle": "for an iOS release of Telegram Archive",
+    "raised": 0,
+    "goal": 99,
+    "donate_url": "",
+    "donate_label": "Donate"
+  }
+}

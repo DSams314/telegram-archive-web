@@ -1,0 +1,63 @@
+# Publishes the website to GitHub Pages.
+#
+# SWITCHED OFF until you turn it on. It only publishes when BOTH are true:
+#
+#   1. The repository has a variable called PUBLISH_SITE set to true
+#      (Settings > Secrets and variables > Actions > Variables).
+#   2. GitHub Pages is set to deploy from "GitHub Actions"
+#      (Settings > Pages > Build and deployment > Source).
+#
+# When it does run, it tests everything first -- including walking through
+# the website in a real browser -- and publishes nothing if any check fails.
+# To take the website down again, set PUBLISH_SITE to false and use
+# "Unpublish site" under Settings > Pages.
+
+name: publish website
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: vars.PUBLISH_SITE == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run the tests
+        run: python -m unittest discover -s tools/tests -t .
+      - name: Build the website
+        run: python tools/build_site.py
+      - name: Walk through it in Chrome
+        env:
+          BROWSER: /usr/bin/google-chrome
+        run: node tools/tests/browser_check.mjs --shots screenshots
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

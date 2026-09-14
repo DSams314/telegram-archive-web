@@ -1,0 +1,374 @@
+/* In-chat search bar, global-search result rows, and the profile panel. */
+
+/* ---- in-chat search ---------------------------------------------------- */
+
+#chat-search {
+  position: absolute;
+  top: calc(50px + var(--inset));
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: var(--radius-panel);
+  background: var(--panel);
+  backdrop-filter: blur(var(--blur)) saturate(1.6);
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(1.6);
+  box-shadow: var(--shadow);
+  z-index: 3;
+  transform: translateY(-8px);
+  opacity: 0;
+  transition: transform var(--dur) var(--spring), opacity var(--dur) var(--spring);
+}
+#chat-search.open { transform: none; opacity: 1; }
+
+#chat-search-input {
+  flex: 1;
+  min-width: 0;
+  height: 30px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--panel-hover);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  padding: 0 12px;
+  outline: none;
+}
+#chat-search-input:focus { box-shadow: 0 0 0 2px var(--accent) inset; }
+
+#chat-search-status {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  min-width: 62px;
+  text-align: right;
+}
+
+/* ---- search results (sidebar) ------------------------------------------ */
+
+.list-section {
+  padding: 12px 10px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.result-row {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--spring-fast);
+}
+.result-row:hover { background: var(--panel-hover); }
+
+.result-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+.result-head b {
+  font-size: 13px;
+  font-weight: 600;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.result-head span {
+  font-size: 11px;
+  color: var(--text-dim);
+  flex: none;
+}
+
+.result-body {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.result-body mark {
+  background: none;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ---- profile panel ----------------------------------------------------- */
+
+#profile {
+  flex: 0 0 var(--profile-w, 340px);
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  backdrop-filter: blur(var(--blur)) saturate(1.6);
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(1.6);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  z-index: 4;
+  /* Slides in from the right edge; the message column reflows around it. */
+  margin-right: calc(-1 * var(--profile-w, 340px) - var(--inset));
+  opacity: 0;
+  transition: margin-right var(--dur) var(--spring), opacity var(--dur) var(--spring);
+}
+#profile.open { margin-right: 0; opacity: 1; }
+#profile { margin-left: var(--inset); }
+
+.pf-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  flex: none;
+}
+.pf-title { font-size: 14px; font-weight: 600; }
+
+.pf-scroll { flex: 1; }
+
+.pf-hero { text-align: center; padding: 22px 16px 16px; }
+.pf-avatar { margin: 0 auto 12px; }
+.pf-hero h2 { margin: 0 0 3px; font-size: 19px; font-weight: 600; }
+.pf-hero p { margin: 0; font-size: 12px; color: var(--text-dim); }
+
+.pf-facts { padding: 0 12px 14px; }
+.pf-row {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--panel-hover);
+  margin-bottom: 4px;
+}
+.pf-label {
+  display: block;
+  font-size: 11px;
+  color: var(--accent);
+  margin-bottom: 1px;
+}
+.pf-value { font-size: 13px; overflow-wrap: anywhere; }
+
+.pf-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 0 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  background: var(--panel-solid);
+  z-index: 1;
+}
+.pf-tabs::-webkit-scrollbar { display: none; }
+.pf-tab {
+  border: 0;
+  background: transparent;
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 13px;
+  padding: 9px 9px 7px;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: color var(--dur-fast) var(--spring-fast),
+              border-color var(--dur-fast) var(--spring-fast);
+}
+.pf-tab:hover:not(:disabled) { color: var(--text); }
+.pf-tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+.pf-tab:disabled { opacity: 0.35; cursor: default; }
+.pf-count {
+  font-size: 10px;
+  margin-left: 4px;
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}
+
+.pf-body { padding: 8px; }
+
+/* Grid tabs: media, gifs, stickers. */
+.pf-media, .pf-gifs, .pf-stickers {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+}
+.pf-stickers { grid-template-columns: repeat(4, 1fr); gap: 4px; }
+
+.pf-tile {
+  position: relative;
+  aspect-ratio: 1;
+  border: 0;
+  padding: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--panel-hover);
+  cursor: pointer;
+}
+.pf-tile img, .pf-tile video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.pf-sticker { background: none; }
+.pf-sticker img, .pf-sticker video { object-fit: contain; }
+.pf-tile-badge {
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  padding: 1px 5px;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Row tabs: files, links, music, voice. */
+.pf-row-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--spring-fast);
+}
+.pf-row-item:hover { background: var(--panel-hover); }
+.pf-glyph {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.pf-glyph svg { width: 18px; height: 18px; }
+.pf-row-body { min-width: 0; flex: 1; }
+.pf-row-body b {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pf-when { font-size: 12px; color: var(--text-dim); }
+.pf-link {
+  display: block;
+  font-size: 13px;
+  color: var(--accent);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- members ------------------------------------------------------------ */
+
+.pf-member {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 8px;
+  border-radius: 10px;
+  transition: background var(--dur-fast) var(--spring-fast);
+}
+.pf-member:hover { background: var(--panel-hover); }
+.pf-member .avatar { cursor: pointer; }
+.pf-member-name {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pf-member-name:hover { text-decoration: underline; }
+.pf-member-info { width: 28px; height: 28px; }
+.pf-member-info svg { width: 16px; height: 16px; }
+
+.pf-badge {
+  display: inline-block;
+  margin-top: 2px;
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Slides up from the row that triggered it. */
+.pf-toast {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 100%;
+  margin-bottom: 4px;
+  padding: 8px 11px;
+  border-radius: 9px;
+  background: var(--panel-solid);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--text);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity var(--dur) var(--spring), transform var(--dur) var(--spring);
+  pointer-events: none;
+  z-index: 2;
+}
+.pf-toast.in { opacity: 1; transform: none; }
+
+.pf-colors { display: flex; align-items: center; gap: 10px; }
+.pf-swatches { display: flex; gap: 5px; flex-wrap: wrap; }
+.pf-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: transform var(--dur-fast) var(--spring-fast);
+}
+.pf-swatch:hover { transform: scale(1.15); }
+.pf-swatch.on { border-color: var(--text); }
+
+.pf-open-chat {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.pf-back { margin-right: -4px; }
+
+/* A member card's name doubles as the way into their own chat. */
+.pf-peer-name { cursor: pointer; }
+.pf-peer-name:hover { text-decoration: underline; }

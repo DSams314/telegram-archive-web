@@ -1,0 +1,158 @@
+/* Design tokens. Every other stylesheet consumes these and never hardcodes a
+   colour, so phase 6 can repoint the whole UI by rewriting this layer -- which
+   is exactly what importing a .attheme / .tdesktop-theme will do. */
+
+:root {
+  /* Motion. A spring with a small overshoot, sampled as a linear() easing so
+     it works on plain CSS transitions. Panels and transitions use --spring;
+     hovers and small state flips use --spring-fast to avoid feeling loose. */
+  --spring: linear(
+    0, 0.006, 0.025 2.8%, 0.101 6.1%, 0.539 18.9%, 0.721 25.3%, 0.849 31.5%,
+    0.937 38.1%, 0.968 41.8%, 0.991 45.7%, 1.006 50.1%, 1.015 55%, 1.017 63.9%,
+    1.001
+  );
+  --spring-fast: cubic-bezier(0.2, 0.9, 0.3, 1.08);
+  --dur: 340ms;
+  --dur-fast: 160ms;
+
+  --radius-bubble: 14px;
+  --radius-panel: 14px;
+  --radius-pill: 999px;
+
+  /* The chrome is a set of rounded cards floating on the wallpaper rather than
+     full-bleed bars. --inset is the gap that lets the background show through
+     between and around them. */
+  --inset: 10px;
+
+  /* Written by settings; declared here so the cascade always has a value. */
+  --bubble-alpha: 0.88;
+  --panel-alpha: 0.74;
+  --wallpaper-dim: 0;
+  --msg-gap: 2px;
+  --shimmer: running;
+
+  --sidebar-w: 320px;
+  --sidebar-min: 220px;
+  --sidebar-max: 520px;
+  --chat-min: 340px;
+
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+    system-ui, sans-serif;
+  --font-size: 14px;
+}
+
+/* ---- dark (default) ---------------------------------------------------- */
+
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --accent: #3e8ef7;
+  --accent-hover: #5a9ff8;
+  --on-accent: #ffffff;
+
+  --bg-app: #0d1218;
+  --panel-solid: #161d26;
+  --panel: color-mix(in srgb, var(--panel-solid) calc(var(--panel-alpha) * 100%), transparent);
+  --panel-hover: rgba(255, 255, 255, 0.05);
+  --panel-active: var(--accent);
+
+  --text: #e9eef4;
+  --text-dim: #8b9bad;
+  --text-faint: #5d6b7a;
+  --on-active: #ffffff;
+  --on-active-dim: rgba(255, 255, 255, 0.72);
+
+  --line: rgba(255, 255, 255, 0.07);
+  --scrim: rgba(0, 0, 0, 0.35);
+
+  --bubble-in: #18202a;
+  --bubble-in-text: #e9eef4;
+  --bubble-out: #2e7ae0;
+  --bubble-out-text: #ffffff;
+  --bubble-meta: rgba(255, 255, 255, 0.55);
+  --bubble-meta-out: rgba(255, 255, 255, 0.75);
+
+  --blur: 24px;
+  --shadow: 0 2px 14px rgba(0, 0, 0, 0.32);
+
+  /* Built-in wallpapers are pure CSS: no image files, nothing to download,
+     and they scale to any window. Phase 6 adds imported ones. */
+  --wallpaper:
+    radial-gradient(120% 90% at 12% 8%, #4b3a6e 0%, transparent 58%),
+    radial-gradient(110% 80% at 88% 12%, #7c3f63 0%, transparent 55%),
+    radial-gradient(120% 100% at 70% 92%, #b4633f 0%, transparent 60%),
+    radial-gradient(140% 120% at 20% 100%, #2b3b63 0%, transparent 65%),
+    linear-gradient(160deg, #26304d 0%, #1b2334 100%);
+}
+
+/* ---- light ------------------------------------------------------------- */
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --accent: #3e8ef7;
+  --accent-hover: #2f7ce0;
+  --on-accent: #ffffff;
+
+  --bg-app: #eef1f5;
+  --panel-solid: #ffffff;
+  --panel: color-mix(in srgb, var(--panel-solid) calc(var(--panel-alpha) * 100%), transparent);
+  --panel-hover: rgba(0, 0, 0, 0.045);
+  --panel-active: var(--accent);
+
+  --text: #10161d;
+  --text-dim: #6b7a89;
+  --text-faint: #94a3b2;
+  --on-active: #ffffff;
+  --on-active-dim: rgba(255, 255, 255, 0.8);
+
+  --line: rgba(0, 0, 0, 0.08);
+  --scrim: rgba(255, 255, 255, 0.4);
+
+  --bubble-in: #ffffff;
+  --bubble-in-text: #10161d;
+  --bubble-out: #3e8ef7;
+  --bubble-out-text: #ffffff;
+  --bubble-meta: rgba(16, 22, 29, 0.42);
+  --bubble-meta-out: rgba(255, 255, 255, 0.8);
+
+  --blur: 20px;
+  --shadow: 0 2px 12px rgba(16, 22, 29, 0.1);
+
+  --wallpaper:
+    radial-gradient(120% 90% at 12% 8%, #cfd9f5 0%, transparent 58%),
+    radial-gradient(110% 80% at 88% 12%, #f3d6e2 0%, transparent 55%),
+    radial-gradient(120% 100% at 70% 92%, #f7ddc9 0%, transparent 60%),
+    linear-gradient(160deg, #e8edf7 0%, #dde4ef 100%);
+}
+
+/* Alternate wallpapers, applied by data-wallpaper on <html>. */
+:root[data-wallpaper="deep"] {
+  --wallpaper:
+    radial-gradient(120% 90% at 20% 10%, #1d3a5c 0%, transparent 60%),
+    radial-gradient(110% 90% at 85% 85%, #14304a 0%, transparent 60%),
+    linear-gradient(165deg, #0f1c2c 0%, #0a1420 100%);
+}
+:root[data-wallpaper="slate"] {
+  --wallpaper: linear-gradient(165deg, #232a33 0%, #161b22 100%);
+}
+:root[data-wallpaper="plain"] {
+  --wallpaper: var(--bg-app);
+}
+
+:root[data-reduce-motion="true"] {
+  --spring: linear(0, 1);
+  --spring-fast: linear(0, 1);
+  --dur: 1ms;
+  --dur-fast: 1ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --spring: linear(0, 1);
+    --spring-fast: linear(0, 1);
+    --dur: 1ms;
+    --dur-fast: 1ms;
+  }
+}

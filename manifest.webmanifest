@@ -1,0 +1,14 @@
+{
+  "name": "Telegram Archive",
+  "short_name": "Archive",
+  "description": "A private reader for your Telegram chat exports. Runs entirely in your browser; your archive never leaves your device.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1b2334",
+  "theme_color": "#1b2334",
+  "icons": [
+    { "src": "app/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "app/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

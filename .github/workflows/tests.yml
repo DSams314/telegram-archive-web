@@ -1,0 +1,92 @@
+# Checks that run on GitHub's own fresh machines every time code is pushed.
+#
+# The point is the "fresh" part. Everything works on the computer it was
+# built on -- that is exactly why problems reach other people instead of being
+# caught first. These machines have never seen the program, have no settings,
+# no index and no permissions already granted.
+#
+# Nothing here publishes anything. Publishing the website is a separate
+# workflow (publish.yml), and it stays switched off until you turn it on.
+
+name: tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    name: indexer and app / ${{ matrix.os }} / python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        python: ['3.9', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      # Includes the check that the website's indexer builds exactly what the
+      # app's builds, and never opens a media file while doing it.
+      - name: Run the tests
+        run: python -m unittest discover -s tools/tests -t . -v
+
+  website:
+    name: website, in a real browser
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build the website
+        run: python tools/build_site.py
+      # Opens the website in Chrome with a new, empty profile, sets it up
+      # against an invented archive, and fails if anything but the site's own
+      # files was ever requested from the web.
+      - name: Walk through it in Chrome
+        env:
+          BROWSER: /usr/bin/google-chrome
+        run: node tools/tests/browser_check.mjs --shots screenshots
+      - name: Keep the screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: website-screenshots
+          path: screenshots
+
+  package:
+    name: downloadable app package
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build
+        run: python tools/make_dist.py
+      - name: Check nothing local was packed
+        shell: bash
+        run: |
+          python - <<'PY'
+          import pathlib, zipfile
+          archive = sorted(pathlib.Path("dist").glob("TelegramArchive-*.zip"))[-1]
+          names = zipfile.ZipFile(archive).namelist()
+          for unwanted in ("/data/", "/dist/", "/site/", "Backups/", "config.json",
+                           "archive.jsonl", "__pycache__"):
+              hits = [n for n in names if unwanted in n]
+              assert not hits, f"{unwanted} was packed: {hits[:5]}"
+          print(f"{archive.name}: {len(names)} files, nothing local included")
+          PY

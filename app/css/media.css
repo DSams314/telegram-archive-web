@@ -1,0 +1,238 @@
+/* Phase 4: albums, GIF/video framing, animated stickers, voice, lightbox. */
+
+.media-frame {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.zoomable { cursor: zoom-in; }
+
+/* GIF marker, matching the app's corner label. */
+.badge {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  pointer-events: none;
+}
+
+/* ---- albums ------------------------------------------------------------ */
+
+.album-grid { display: grid; }
+.album-cell {
+  position: relative;
+  overflow: hidden;
+  border-radius: 3px;
+}
+/* Only the outer corners round, so the grid reads as one object. */
+.album-cell:first-child { border-top-left-radius: 11px; }
+.album-cell:last-child { border-bottom-right-radius: 11px; }
+.album-grid > .album-cell > .media,
+.album-grid > .album-cell > .media-frame {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  border-radius: 0;
+}
+.album-grid .absent { width: 100% !important; height: 100% !important; }
+
+/* ---- animated stickers ------------------------------------------------- */
+
+.tgs {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.tgs-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.tgs-bare { font-size: 44px; }
+/* Once a renderer takes over, the poster steps aside. */
+.tgs-live .tgs-poster { display: none; }
+.tgs canvas, .tgs svg { width: 100%; height: 100%; }
+
+.sticker-video { background: none; object-fit: contain; }
+
+/* ---- voice messages ---------------------------------------------------- */
+
+.voice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 220px;
+  padding: 2px 0;
+  --wave-played: var(--accent);
+  --wave-rest: rgba(127, 127, 127, 0.45);
+}
+.out .voice {
+  --wave-played: #fff;
+  --wave-rest: rgba(255, 255, 255, 0.45);
+}
+.voice-play {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--spring-fast);
+}
+.out .voice-play { background: #fff; color: var(--accent); }
+.voice-play:active { transform: scale(0.9); }
+.voice-play svg { width: 16px; height: 16px; }
+
+.voice-body { flex: 1; min-width: 0; }
+.voice-wave {
+  display: block;
+  width: 100%;
+  height: 26px;
+  cursor: pointer;
+}
+.voice-time {
+  font-size: 11px;
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}
+
+.inline-audio { width: 100%; margin-top: 6px; height: 32px; }
+
+/* ---- lightbox ---------------------------------------------------------- */
+
+#lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: 64px 1fr 64px;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.86);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  animation: lb-in var(--dur) var(--spring);
+}
+@keyframes lb-in { from { opacity: 0; } to { opacity: 1; } }
+
+.lb-stage {
+  grid-column: 2;
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: 40px 0;
+}
+.lb-stage img, .lb-stage video {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;      /* both axes auto: never distort, whatever the shape */
+  border-radius: 8px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+}
+
+#lightbox button {
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: color var(--dur-fast) var(--spring-fast),
+              transform var(--dur-fast) var(--spring-fast);
+}
+#lightbox button:hover { color: #fff; }
+#lightbox button:active { transform: scale(0.9); }
+#lightbox button svg { width: 30px; height: 30px; }
+.lb-prev { grid-column: 1; height: 100%; }
+.lb-next { grid-column: 3; height: 100%; }
+.lb-close {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  width: 42px;
+  height: 42px;
+}
+.lb-caption {
+  position: absolute;
+  bottom: 18px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+/* ---- spoilers ----------------------------------------------------------- */
+
+.spoiler {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  cursor: pointer;
+  /* Sized by the caller from the export's own dimensions, so the shape is
+     right before anything loads. */
+}
+.spoiler-media {
+  /* Heavy enough that nothing is legible, but the colours still show through
+     so the reveal has something to uncover. */
+  filter: blur(22px) saturate(1.2);
+  transform: scale(1.12);   /* hides the blur's soft edges */
+  transition: filter 480ms var(--spring), transform 480ms var(--spring);
+}
+.spoiler-sand {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.spoiler-hint {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  pointer-events: none;
+  transition: opacity 200ms var(--spring);
+}
+
+/* The reveal is a circle grown from the click point. Animating clip-path
+   keeps it on the compositor, and the blur lifts over the same interval so
+   the two read as one motion. */
+.spoiler.revealed .spoiler-media {
+  filter: none;
+  transform: none;
+  clip-path: circle(var(--reveal-r, 150%) at var(--reveal-x, 50%) var(--reveal-y, 50%));
+  animation: spoiler-open 620ms var(--spring) both;
+}
+.spoiler.revealed .spoiler-hint { opacity: 0; }
+.spoiler.revealed { cursor: zoom-in; }
+
+@keyframes spoiler-open {
+  from { clip-path: circle(0px at var(--reveal-x, 50%) var(--reveal-y, 50%)); }
+  to { clip-path: circle(var(--reveal-r, 150%) at var(--reveal-x, 50%) var(--reveal-y, 50%)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spoiler.revealed .spoiler-media { animation: none; clip-path: none; }
+}

@@ -1,0 +1,16 @@
+// A Telegram Desktop palette, same shape the real ones use.
+windowBg: #17211b;
+windowFg: #e6f0e8;
+windowSubTextFg: #8aa394;
+windowBgActive: #4caf7d;
+windowActiveTextFg: windowBgActive;   // alias, must resolve
+dialogsBg: windowBg;
+dialogsBgActive: #2f6b4c;
+msgInBg: #1e2a22;
+msgOutBg: #35624a;
+historyTextInFg: #e6f0e8;
+historyTextOutFg: #ffffff;
+msgInDateFg: #7d9689;
+msgOutDateFg: #bcd6c6;
+msgServiceBg: #00000059;
+shadowFg: #0000002e;

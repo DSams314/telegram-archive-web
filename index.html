@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-wallpaper="default">
+<head>
+<meta charset="utf-8">
+<!--
+  The page's own security rules, enforced by the browser. In plain terms:
+  code, styles, pictures and requests may only come from this site itself
+  (or be made on this device, as blob: and data: are); nothing may be sent to
+  any other website; no plugins, no embedding in other pages, no forms.
+  This is what makes "your archive cannot leave your device" a rule the
+  browser enforces rather than a promise.
+-->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self' blob: data:; font-src 'self' data:; connect-src 'self' blob: data:; worker-src 'self'; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<!-- Links you follow (the donation page, Telegram's site) learn nothing about this page. -->
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1b2334">
+<title>Telegram Archive</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="app/icons/icon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="app/icons/icon-180.png">
+<link rel="stylesheet" href="app/css/theme.css">
+<link rel="stylesheet" href="app/css/shell.css">
+<link rel="stylesheet" href="app/css/sidebar.css">
+<link rel="stylesheet" href="app/css/chat.css">
+<link rel="stylesheet" href="app/css/message.css">
+<link rel="stylesheet" href="app/css/media.css">
+<link rel="stylesheet" href="app/css/search.css">
+<link rel="stylesheet" href="app/css/settings.css">
+<link rel="stylesheet" href="app/css/setup.css">
+</head>
+<body>
+
+<div id="wallpaper"></div>
+
+<div id="app">
+
+  <aside id="sidebar">
+    <div id="sidebar-head">
+      <h1>Chats</h1>
+    </div>
+
+    <div id="search-wrap">
+      <input id="search" type="search" placeholder="Search" autocomplete="off" spellcheck="false">
+    </div>
+
+    <div id="chat-list" class="scroll" role="listbox" aria-label="Chats"></div>
+
+    <nav id="nav-rail">
+      <button class="icon-btn on" data-icon="chats" title="Chats"></button>
+      <button class="icon-btn" id="btn-settings" data-icon="settings" title="Settings (⌘,)"></button>
+      <button class="icon-btn" id="btn-save" data-icon="save" title="Save your settings file" hidden></button>
+      <button class="icon-btn" id="btn-power" data-icon="power" title="Shut down"></button>
+    </nav>
+
+    <div id="resizer" role="separator" aria-orientation="vertical"
+         title="Drag to resize · double-click to reset"></div>
+  </aside>
+
+  <section id="chat-pane">
+    <header id="chat-head" hidden></header>
+
+    <div id="chat-search" hidden>
+      <input id="chat-search-input" type="search" placeholder="Search this chat"
+             autocomplete="off" spellcheck="false">
+      <span id="chat-search-status"></span>
+      <button class="icon-btn" id="chat-search-prev" title="Previous match">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round"><path d="M6 14.5l6-6 6 6"/></svg>
+      </button>
+      <button class="icon-btn" id="chat-search-next" title="Next match">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5l6 6 6-6"/></svg>
+      </button>
+      <button class="icon-btn" id="chat-search-close" title="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div id="chat-search-results"></div>
+    </div>
+
+    <div id="message-scroll" class="scroll">
+      <div id="message-column"></div>
+    </div>
+    <div id="date-badge" class="day-pill floating" aria-hidden="true"></div>
+    <button id="to-bottom" title="Jump to latest"></button>
+    <div id="chat-empty" hidden></div>
+  </section>
+
+</div>
+
+<script type="module" src="app/main.js"></script>
+</body>
+</html>

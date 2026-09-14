@@ -1,0 +1,136 @@
+/* Left pane: title bar, search, chat list, nav rail. */
+
+#sidebar-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px 6px;
+  flex: none;
+}
+#sidebar-head h1 {
+  flex: 1;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  /* No padding offset: the header holds nothing but this title now, so any
+     nudge to balance a button pushes it off centre instead of onto it. */
+}
+
+#search-wrap { padding: 2px 12px 10px; flex: none; }
+#search {
+  width: 100%;
+  height: 32px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--panel-hover);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  padding: 0 12px 0 32px;
+  outline: none;
+  transition: background var(--dur-fast) var(--spring-fast),
+              box-shadow var(--dur-fast) var(--spring-fast);
+  background-image: var(--search-icon);
+  background-repeat: no-repeat;
+  background-position: 10px center;
+  background-size: 14px;
+}
+#search::placeholder { color: var(--text-faint); }
+#search:focus { box-shadow: 0 0 0 2px var(--accent) inset; }
+
+#chat-list { flex: 1; padding: 0 6px 8px; }
+
+.chat-row {
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 10px;
+  align-items: center;
+  padding: 7px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--spring-fast);
+}
+.chat-row:hover { background: var(--panel-hover); }
+.chat-row[aria-selected="true"] { background: var(--panel-active); }
+
+.chat-row .avatar {
+  grid-row: 1 / 3;
+  width: 46px;
+  height: 46px;
+  font-size: 17px;
+}
+
+.chat-row .top {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.chat-row .name {
+  font-weight: 600;
+  font-size: 14px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chat-row .when {
+  font-size: 12px;
+  color: var(--text-dim);
+  flex: none;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The archive's defining line: when this conversation was last backed up,
+   in place of a last-message preview. */
+.chat-row .backup {
+  font-size: 13px;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-row[aria-selected="true"] .name { color: var(--on-active); }
+.chat-row[aria-selected="true"] .when,
+.chat-row[aria-selected="true"] .backup { color: var(--on-active-dim); }
+
+/* ---- nav rail ---------------------------------------------------------- */
+
+#nav-rail {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 6px 10px;
+  border-top: 1px solid var(--line);
+  flex: none;
+}
+#nav-rail .icon-btn.on { color: var(--accent); }
+
+/* ---- empty / loading --------------------------------------------------- */
+
+.hint {
+  color: var(--text-dim);
+  font-size: 13px;
+  text-align: center;
+  padding: 28px 16px;
+  line-height: 1.5;
+}
+
+/* The website's Save button, for browsers that cannot save into a folder. A
+   dot means there are changes that exist only in this browser so far. */
+#btn-save { position: relative; }
+#btn-save.dirty { color: var(--accent); }
+#btn-save.dirty::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #e0a33a;
+}

@@ -1,0 +1,190 @@
+/* Right pane: the chat header and the scrolling message column. */
+
+/* The header is not a bar: it is two floating pills -- who you are reading, and
+   what you can do -- with messages passing *behind* them.
+   
+   It is absolutely positioned rather than a flex row, so the scroll area owns
+   the full height of the pane. Laying it out in the flow instead makes the
+   scroller start below it, and bubbles then vanish at a hard invisible edge
+   as they scroll up rather than sliding under the translucent pill. */
+#chat-head {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--inset);
+  z-index: 3;
+  pointer-events: none;   /* only the pills themselves are clickable */
+}
+#chat-head > * { pointer-events: auto; }
+
+.head-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* Uniform, so the hover pill inside sits concentric with this one. An
+     asymmetric card padding leaves the highlight hugging one edge. */
+  padding: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--panel);
+  backdrop-filter: blur(var(--blur)) saturate(1.6);
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(1.6);
+  box-shadow: var(--shadow);
+  min-width: 0;
+}
+/* The identity pill spans the width; the actions pill keeps its natural size. */
+.head-card:not(.actions) { flex: 1; }
+.head-card.actions { padding: 4px; gap: 2px; flex: none; }
+#chat-head .avatar { width: 38px; height: 38px; font-size: 15px; }
+#chat-head .who { flex: 1; min-width: 0; }
+#chat-head .who b {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#chat-head .who span {
+  display: block;
+  font-size: 12px;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Clicking the header opens the profile panel in phase 5. */
+#chat-head .peer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  /* 2px around a 38px avatar keeps the circle centred in the 42px pill; the
+     wider right side is breathing room for the name, not extra inset. */
+  padding: 2px 16px 2px 2px;
+  margin: 0;
+  /* Matches the enclosing card: a rounded rectangle inside a pill reads as a
+     mistake at every corner. */
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  transition: background var(--dur-fast) var(--spring-fast);
+}
+#chat-head .peer:hover { background: var(--panel-hover); }
+
+#message-scroll { flex: 1; position: relative; }
+
+/* Enough headroom that the newest messages clear the floating header at rest,
+   while older ones still slide behind it as you scroll. */
+#message-column { padding-top: calc(50px + var(--inset) * 2); }
+
+/* The column that holds bubbles. Percentage max-widths on the bubbles mean a
+   narrowing window pulls the two sides toward each other rather than
+   reflowing the layout -- the "squish together" behaviour. */
+#message-column {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 14px 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--msg-gap);
+}
+
+#chat-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 24px;
+}
+/* A card, not bare text: this sits over the wallpaper, and an explanation you
+   cannot read is worse than none. */
+#chat-empty > div {
+  max-width: 46ch;
+  padding: 22px 26px;
+  border-radius: var(--radius-panel);
+  background: var(--panel-solid);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  color: var(--text-dim);
+}
+
+/* Date separator, centred and floating over the wallpaper. */
+.day-pill {
+  align-self: center;
+  margin: 14px 0 10px;
+  padding: 4px 11px;
+  border-radius: var(--radius-pill);
+  background: var(--scrim);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  user-select: none;
+}
+
+/* A chunk that isn't materialised is an empty section holding its own height,
+   so the scrollbar stays honest without the messages being in the DOM. */
+.chunk {
+  display: flex;
+  flex-direction: column;
+  gap: var(--msg-gap);
+}
+
+/* ---- floating controls ------------------------------------------------- */
+
+/* The date of whatever is at the top of the viewport, shown while scrolling. */
+#date-badge.floating {
+  position: absolute;
+  top: 62px;
+  left: 50%;
+  transform: translate(-50%, -8px);
+  margin: 0;
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur) var(--spring),
+              transform var(--dur) var(--spring);
+}
+#date-badge.floating.visible { opacity: 1; transform: translate(-50%, 0); }
+
+#to-bottom {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--panel-solid);
+  color: var(--text-dim);
+  box-shadow: var(--shadow);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  z-index: 4;
+  opacity: 0;
+  transform: translateY(12px) scale(0.85);
+  pointer-events: none;
+  transition: opacity var(--dur) var(--spring),
+              transform var(--dur) var(--spring),
+              color var(--dur-fast) var(--spring-fast);
+}
+#to-bottom.visible {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+#to-bottom:hover { color: var(--accent); }
+#to-bottom:active { transform: scale(0.9); }
+#to-bottom svg { width: 22px; height: 22px; }

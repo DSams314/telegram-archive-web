@@ -1,0 +1,411 @@
+/* Settings screen and the right-click menu. */
+
+#settings {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-panel);
+  overflow: hidden;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  backdrop-filter: blur(calc(var(--blur) * 1.4)) saturate(1.5);
+  -webkit-backdrop-filter: blur(calc(var(--blur) * 1.4)) saturate(1.5);
+  animation: st-in var(--dur) var(--spring);
+}
+@keyframes st-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+.st-head {
+  display: flex;
+  align-items: center;
+  padding: 12px 14px 8px;
+  flex: none;
+}
+/* Baseline-aligned with the heading. `align-items: baseline` has to live on a
+   wrapper rather than .st-head, because the close button in that row must stay
+   vertically centred instead of hanging off a text baseline. */
+.st-titlebar {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  min-width: 0;
+}
+.st-head h2 { margin: 0; font-size: 17px; font-weight: 600; }
+.st-version {
+  font-size: 11px;
+  color: var(--text-faint);
+  letter-spacing: 0.02em;
+}
+
+.st-searchwrap { padding: 0 14px 10px; flex: none; }
+#st-search {
+  width: 100%;
+  height: 34px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--panel-hover);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  padding: 0 14px;
+  outline: none;
+}
+#st-search:focus { box-shadow: 0 0 0 2px var(--accent) inset; }
+
+.st-status {
+  margin: 0 14px 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+  /* Permission errors arrive as several lines of instructions; keep the breaks
+     the server wrote, and let a long path wrap rather than widen the panel. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--text);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.st-status[data-tone="bad"] {
+  background: color-mix(in srgb, #e2564d 16%, transparent);
+  border-color: color-mix(in srgb, #e2564d 45%, transparent);
+}
+
+.st-body { flex: 1; padding: 0 14px 40px; }
+
+.st-group { margin-bottom: 22px; }
+.st-group h3 {
+  margin: 0 0 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.st-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--panel-hover);
+  margin-bottom: 3px;
+}
+.st-label { flex: 1; min-width: 0; }
+.st-label b { display: block; font-size: 14px; font-weight: 500; }
+.st-label span {
+  display: block;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 2px;
+  line-height: 1.35;
+}
+.st-control { flex: none; display: flex; align-items: center; }
+
+/* ---- controls ---------------------------------------------------------- */
+
+.st-toggle {
+  width: 44px;
+  height: 26px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--text-faint) 45%, transparent);
+  position: relative;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--spring-fast);
+}
+.st-toggle::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform var(--dur-fast) var(--spring-fast);
+}
+.st-toggle[aria-checked="true"] { background: var(--accent); }
+.st-toggle[aria-checked="true"]::after { transform: translateX(18px); }
+
+.st-select, .st-text {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-solid);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  padding: 6px 8px;
+  outline: none;
+  min-width: 150px;
+}
+.st-text:read-only { opacity: 0.65; }
+.st-select:focus, .st-text:focus { border-color: var(--accent); }
+
+.st-range { display: flex; align-items: center; gap: 10px; }
+.st-range input { width: 150px; accent-color: var(--accent); }
+.st-range span {
+  font-size: 12px;
+  color: var(--text-dim);
+  min-width: 46px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.st-color { display: flex; align-items: center; gap: 5px; }
+.st-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  padding: 0;
+  transition: transform var(--dur-fast) var(--spring-fast);
+}
+.st-swatch:hover { transform: scale(1.15); }
+.st-color input[type="color"] {
+  width: 30px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
+}
+
+.st-button {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-solid);
+  color: var(--accent);
+  font: inherit;
+  font-size: 13px;
+  padding: 7px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--dur-fast) var(--spring-fast);
+}
+.st-button:hover { background: var(--panel-hover); }
+.st-danger { color: #e2564d; }
+
+/* ---- context menu ------------------------------------------------------ */
+
+#context-menu {
+  position: fixed;
+  z-index: 60;
+  min-width: 176px;
+  padding: 5px;
+  border-radius: 10px;
+  background: var(--panel-solid);
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.35);
+  animation: cm-in var(--dur-fast) var(--spring-fast);
+}
+@keyframes cm-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+.cm-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.cm-item:hover { background: var(--panel-hover); }
+.cm-danger { color: #e2564d; }
+.cm-sep { height: 1px; margin: 4px 6px; background: var(--line); }
+
+/* Message ids, when the debugging setting is on. */
+.meta .msgid {
+  opacity: 0.55;
+  margin-right: 5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.st-wallpaper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.st-wallpaper .st-select { min-width: 120px; }
+
+/* ---- shortcuts sheet ---------------------------------------------------- */
+
+#shortcuts {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: cm-in var(--dur) var(--spring);
+}
+.sc-card {
+  min-width: 340px;
+  max-width: 480px;
+  padding: 20px 22px;
+  border-radius: 14px;
+  background: var(--panel-solid);
+  border: 1px solid var(--line);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+}
+.sc-card h2 { margin: 0 0 14px; font-size: 16px; font-weight: 600; }
+.sc-row {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 5px 0;
+  font-size: 13px;
+}
+.sc-keys { display: flex; gap: 4px; min-width: 108px; flex: none; }
+.sc-row span { color: var(--text-dim); }
+kbd {
+  font: inherit;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--panel-hover);
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  color: var(--text);
+}
+
+/* ---- backup folder: field + browse button ------------------------------- */
+
+.st-path { display: flex; gap: 8px; align-items: center; width: 100%; }
+.st-path .st-text { flex: 1; min-width: 0; }
+.st-btn {
+  flex: none;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-hover);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--spring-fast), background var(--dur-fast);
+}
+.st-btn:hover { background: var(--panel-active, var(--panel-hover)); }
+.st-btn:active { transform: scale(0.97); }
+
+/* ---- storage indicator -------------------------------------------------- */
+
+.st-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  padding: 5px 11px 5px 9px;
+  border-radius: 999px;
+  background: var(--panel-hover);
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.st-status-pill::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: currentColor;
+}
+.st-status-pill[data-state="ok"]      { color: #4fbf6a; }
+.st-status-pill[data-state="away"]    { color: #e0a33a; }
+.st-status-pill[data-state="bad"]     { color: #e2564d; }
+.st-status-pill[data-state="unknown"] { color: var(--text-dim); }
+
+/* A row linked to from elsewhere flashes once so it is findable. */
+@keyframes st-flash {
+  from { background: color-mix(in srgb, var(--accent) 34%, transparent); }
+  to   { background: transparent; }
+}
+.st-row.st-flash { animation: st-flash 1.4s var(--spring) 1; border-radius: 10px; }
+
+/* A caution: worth reading, but not a failure. */
+.st-status[data-tone="warn"] {
+  background: color-mix(in srgb, #e0a33a 15%, transparent);
+  border-color: color-mix(in srgb, #e0a33a 45%, transparent);
+}
+
+/* ---- the fund panel at the top of Settings -------------------------------- */
+
+.st-fund { padding: 0 14px 10px; flex: none; }
+.fund {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--accent) 22%, transparent),
+    color-mix(in srgb, var(--accent) 7%, transparent));
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.fund-head b { display: block; font-size: 13.5px; font-weight: 600; }
+.fund-head span { display: block; margin-top: 1px; font-size: 12px; color: var(--text-dim); }
+.fund-track {
+  height: 8px;
+  margin: 10px 0 9px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--text-faint) 30%, transparent);
+}
+.fund-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width var(--dur) var(--spring);
+}
+.fund-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12.5px;
+}
+.fund-figure { color: var(--text-dim); font-variant-numeric: tabular-nums; }
+.fund-donate {
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 500;
+  text-decoration: none;
+}
+.fund-soon { font-size: 12px; color: var(--text-faint); }
+
+/* ---- the website's folder and settings-file rows ----------------------------- */
+
+.st-folder-name {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+.st-row[data-setting="configFile"] { flex-wrap: wrap; }
+.st-configfile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 7px;
+  max-width: 340px;
+}
+.st-save-state { font-size: 12px; line-height: 1.4; color: var(--text-dim); text-align: right; }
+.st-configfile .st-buttons { display: flex; gap: 6px; }
+.st-btn.accent { background: var(--accent); color: var(--on-accent); border-color: transparent; }
+.st-body .privacy { margin: 6px 0 34px; }

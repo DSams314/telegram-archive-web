@@ -1,0 +1,172 @@
+/* App shell: the wallpaper layer, the two panes, and the drag handle between
+   them. Nothing in here knows about messages. */
+
+* { box-sizing: border-box; }
+
+/* The UA stylesheet implements [hidden] as `display: none`, which ANY author
+   `display` silently overrides. That bit once already: #chat-empty is a
+   full-pane absolute overlay, so while "hidden" it stayed laid out on top of
+   the message list and ate every wheel event. Enforce it globally. */
+[hidden] { display: none !important; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font);
+  font-size: var(--font-size);
+  color: var(--text);
+  background: var(--bg-app);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The wallpaper sits behind everything and never scrolls, so translucent
+   panels blur against a stable image the way the desktop app does. */
+#wallpaper {
+  position: fixed;
+  inset: 0;
+  background: var(--wallpaper);
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+  transition: opacity var(--dur) var(--spring);
+}
+/* Dimming rides on top so it works for gradients and imported images alike. */
+#wallpaper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: var(--wallpaper-dim);
+  transition: opacity var(--dur) var(--spring);
+}
+
+#app {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  height: 100%;
+  align-items: stretch;
+  gap: var(--inset);
+  padding: var(--inset);
+}
+
+/* The sidebar holds its width while the window shrinks -- the message column
+   takes the loss until it hits --chat-min, and only then does the sidebar
+   give ground. flex-shrink on both, with min-widths, expresses exactly that. */
+/* A rounded card sitting on the wallpaper, not a panel welded to the window
+   edge -- the gap around it is what makes the background read as a background. */
+#sidebar {
+  flex: 0 1 var(--sidebar-w);
+  min-width: var(--sidebar-min);
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  backdrop-filter: blur(var(--blur)) saturate(1.6);
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(1.6);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+}
+
+#chat-pane {
+  flex: 1 1 0;
+  min-width: var(--chat-min);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---- resize handle ----------------------------------------------------- */
+
+/* Inside the sidebar's right edge, not out in the gap. The sidebar clips to
+   its rounded corners with overflow:hidden, so anything positioned beyond that
+   edge is invisible AND unclickable -- which is exactly what happened. */
+#resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 9px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 5;
+  /* The visible line is a child so the hit area can be wider than it looks. */
+}
+#resizer::after {
+  content: "";
+  position: absolute;
+  inset: 10px 3px 10px auto;
+  right: 2px;
+  width: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--spring-fast);
+}
+#resizer:hover::after,
+body.resizing #resizer::after { opacity: 0.55; }
+
+/* Suppress hover/selection everywhere while a drag is in flight. */
+body.resizing { cursor: col-resize; user-select: none; }
+body.resizing * { pointer-events: none; }
+body.resizing #resizer { pointer-events: auto; }
+
+/* Width changes animate, except during a drag where they must track the
+   pointer exactly. */
+#sidebar { transition: flex-basis var(--dur) var(--spring); }
+body.resizing #sidebar { transition: none; }
+
+/* ---- shared bits ------------------------------------------------------- */
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  flex: none;
+  transition: background var(--dur-fast) var(--spring-fast),
+              color var(--dur-fast) var(--spring-fast),
+              transform var(--dur-fast) var(--spring-fast);
+}
+.icon-btn:hover { background: var(--panel-hover); color: var(--text); }
+.icon-btn:active { transform: scale(0.9); }
+.icon-btn svg { width: 20px; height: 20px; }
+
+.avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+  color: #fff;
+  overflow: hidden;
+  user-select: none;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.scroll {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-faint) transparent;
+}
+.scroll::-webkit-scrollbar { width: 8px; }
+.scroll::-webkit-scrollbar-thumb {
+  background: var(--text-faint);
+  border-radius: 4px;
+  background-clip: padding-box;
+  border: 2px solid transparent;
+}
+.scroll::-webkit-scrollbar-track { background: transparent; }

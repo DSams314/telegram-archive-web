@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; img-src 'self' data:; script-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Getting your chats into Telegram Archive</title>
+<link rel="icon" href="../app/icons/icon-32.png" sizes="32x32">
+<link rel="stylesheet" href="help.css">
+</head>
+<body>
+<main>
+
+<header>
+  <img src="../app/icons/icon-192.png" alt="" width="64" height="64">
+  <div>
+    <h1>Getting your chats into Telegram Archive</h1>
+    <p>Three steps: export a chat from Telegram, put it in your folder, open the folder.</p>
+  </div>
+</header>
+
+<nav>
+  <a href="#export">1. Export a chat</a>
+  <a href="#folder">2. Put it in your folder</a>
+  <a href="#open">3. Open it</a>
+  <a href="#privacy">Privacy</a>
+</nav>
+
+<section id="export">
+  <h2>1. Export a chat from Telegram Desktop</h2>
+  <ol>
+    <li>Install <b>Telegram Desktop</b> from
+      <a href="https://desktop.telegram.org/" target="_blank" rel="noopener noreferrer">desktop.telegram.org</a>.
+      Use the version from Telegram’s own website, not the one from the Mac App Store.</li>
+    <li>Sign in, and open the chat you want to keep.</li>
+    <li>Click the <b>⋮</b> menu at the top right of the chat, then <b>Export chat history</b>.</li>
+    <li>Under <b>Format</b>, choose <b>Machine-readable JSON</b>. This matters: it is the
+      format Telegram Archive reads.</li>
+    <li>Tick the kinds of media you want to keep: photos, videos, voice messages, video
+      messages, stickers, GIFs and files. Raise the size limit if you want long videos too.</li>
+    <li>Click <b>Export</b>. Telegram saves a folder called <code>ChatExport_</code> followed
+      by the date, usually in <code>Downloads › Telegram Desktop</code>.</li>
+  </ol>
+  <p class="aside">Export each chat on its own, as above. Telegram’s whole-account
+    export (Settings › Advanced › Export Telegram data) packs everything into one file,
+    which Telegram Archive does not read.</p>
+</section>
+
+<section id="folder">
+  <h2>2. Put it in your Telegram Archive folder</h2>
+  <p>Make a folder called <b>Telegram Archive</b> wherever you like. Inside it, make a
+    folder called <b>Backups</b>, and inside that, one folder per chat:</p>
+<pre>
+Telegram Archive/
+  Backups/
+    Robin/
+      ChatExport_2024-03-01/
+        result.json
+        photos/  stickers/  …
+    Book Club/
+      ChatExport_2024-05-01/
+        result.json  …
+  telegram-archive-config.json    ← your settings, made for you
+</pre>
+  <ol>
+    <li>Make a folder for the chat inside <b>Backups</b>. Name it after the chat.</li>
+    <li>Move the <code>ChatExport_…</code> folder Telegram made into it.</li>
+  </ol>
+  <p class="aside"><b>Exported the same chat again later?</b> Put the new
+    <code>ChatExport_…</code> folder next to the old one, in the same chat folder.
+    Telegram Archive merges them, and uses each photo from whichever export still has it.</p>
+  <p class="aside"><b>On a NAS or a cloud drive?</b> That works. When it starts, Telegram
+    Archive reads only the small <code>result.json</code> files, so nothing large is
+    downloaded. Photos and videos are fetched only as you scroll to them.</p>
+</section>
+
+<section id="open">
+  <h2>3. Open it in Telegram Archive</h2>
+  <p>Open Telegram Archive, press <b>Choose your Telegram Archive folder</b>, and pick the
+    folder from step 2 (the one that has <b>Backups</b> inside it). The first time, it reads
+    your chats and builds an index; after that it opens straight away.</p>
+  <table>
+    <tr><th>Chrome, Edge</th>
+      <td>Remembers the folder, and saves your settings into it automatically.</td></tr>
+    <tr><th>Safari, Firefox, Brave</th>
+      <td>You choose the folder on each visit. After changing settings, press
+        <b>Save</b> (bottom left) and put the downloaded
+        <code>telegram-archive-config.json</code> in your Telegram Archive folder,
+        replacing the old one. Closing the tab with unsaved changes asks first.</td></tr>
+  </table>
+</section>
+
+<section id="privacy">
+  <h2>Privacy</h2>
+  <ul>
+    <li><b>Runs in your browser.</b> No account, no sign-in, no tracking, no ads, no cookies.</li>
+    <li><b>Your archive stays on your device.</b> Chats, photos, stickers and settings never
+      leave it. The page is built so that it cannot send them anywhere.</li>
+    <li><b>It only reads your exports.</b> The one file it ever writes is
+      <code>telegram-archive-config.json</code>, next to your Backups folder, and only in
+      browsers that allow it.</li>
+    <li><b>What GitHub sees.</b> This website is hosted on GitHub, so loading it tells GitHub
+      your IP address and which browser you use, as any website would. It never tells
+      GitHub anything about your archive.</li>
+  </ul>
+</section>
+
+<footer><a href="../">← Back to Telegram Archive</a></footer>
+
+</main>
+</body>
+</html>

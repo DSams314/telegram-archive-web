@@ -1,0 +1,338 @@
+/* Bubbles, replies, reactions, and inline media. */
+
+.msg {
+  display: flex;
+  max-width: 100%;
+  margin-top: 2px;
+}
+.msg.out { justify-content: flex-end; }
+/* First message of a run gets breathing room above it. */
+.msg.lead { margin-top: 10px; }
+
+.bubble {
+  position: relative;
+  max-width: min(72%, 620px);
+  padding: 6px 10px 6px;
+  border-radius: var(--radius-bubble);
+  /* Opacity is a setting, so it is composed here rather than baked into the
+     colour -- an imported theme supplies a solid colour and still respects it. */
+  background: color-mix(in srgb, var(--bubble-in)
+              calc(var(--bubble-alpha) * 100%), transparent);
+  color: var(--bubble-in-text);
+  box-shadow: var(--shadow);
+  /* Long unbroken URLs must not force the column wider. */
+  overflow-wrap: anywhere;
+  animation: bubble-in var(--dur) var(--spring) both;
+}
+.out .bubble {
+  background: color-mix(in srgb, var(--bubble-out)
+              calc(var(--bubble-alpha) * 100%), transparent);
+  color: var(--bubble-out-text);
+}
+
+/* Telegram tucks the corner nearest the previous message of the same run. */
+.msg.tail-in .bubble { border-bottom-left-radius: 5px; }
+.msg.tail-out .bubble { border-bottom-right-radius: 5px; }
+
+@keyframes bubble-in {
+  from { opacity: 0; transform: translateY(6px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+
+.sender {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 1px;
+}
+.out .sender { color: var(--bubble-out-text); opacity: 0.9; }
+
+.text {
+  font-size: 14px;
+  line-height: 1.32;
+  white-space: pre-wrap;
+}
+.text a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.out .text a { color: #fff; }
+.text code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.92em;
+  background: rgba(127, 127, 127, 0.18);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+.text .spoiler {
+  background: currentColor;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: color var(--dur) var(--spring);
+}
+.text .spoiler.revealed { background: none; }
+
+/* Time (and edited marker) trails the last line, as in the desktop app. */
+.meta {
+  float: right;
+  margin: 6px 0 -2px 8px;
+  font-size: 11px;
+  line-height: 1;
+  color: var(--bubble-meta);
+  white-space: nowrap;
+  user-select: none;
+  font-variant-numeric: tabular-nums;
+}
+.out .meta { color: var(--bubble-meta-out); }
+.meta .edited { font-style: italic; opacity: 0.85; margin-right: 3px; }
+
+/* ---- reply ------------------------------------------------------------- */
+
+.reply {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  border-left: 2px solid var(--accent);
+  border-radius: 4px;
+  padding: 2px 8px;
+  margin-bottom: 4px;
+  background: rgba(127, 127, 127, 0.14);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--spring-fast);
+}
+.reply:hover { background: rgba(127, 127, 127, 0.24); }
+.out .reply { border-left-color: var(--bubble-out-text); }
+.reply b {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.out .reply b { color: var(--bubble-out-text); }
+.reply span {
+  display: block;
+  font-size: 13px;
+  opacity: 0.75;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- reactions --------------------------------------------------------- */
+
+.reactions { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
+.reaction {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  background: rgba(127, 127, 127, 0.2);
+  font-size: 12px;
+  line-height: 1.4;
+  user-select: none;
+}
+.out .reaction { background: rgba(255, 255, 255, 0.22); }
+
+/* ---- media ------------------------------------------------------------- */
+
+/* Every media element is given explicit pixel dimensions computed from the
+   export's own width/height, so the aspect ratio is always exact and the
+   space is reserved before the bytes arrive. Never rely on max-width plus
+   max-height alone -- they clamp each axis independently and squash the
+   image. */
+.media {
+  display: block;
+  border-radius: 10px;
+  background: rgba(127, 127, 127, 0.12);
+  object-fit: cover;
+}
+.bubble .media { margin: -2px 0 2px; }
+.bubble.media-only { padding: 3px; background: none; box-shadow: none; }
+.bubble.media-only .media { margin: 0; }
+.bubble.media-only .meta {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  margin: 0;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* Stickers float free: no bubble, no shadow. */
+.bubble.sticker-only {
+  background: none;
+  box-shadow: none;
+  padding: 0;
+}
+.bubble.sticker-only .media { background: none; }
+.bubble.sticker-only .meta {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  margin: 0;
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+}
+
+.duration {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  pointer-events: none;
+}
+
+/* ---- absent media ------------------------------------------------------ */
+
+/* Shaped from the export's stored width/height even though the file is gone,
+   so the layout matches what was really there. */
+.absent {
+  position: relative;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(127, 127, 127, 0.16);
+}
+/* The sweep is a translated element, not an animated background-position.
+   background-position is not a composited property: every frame repaints on
+   the main thread, and `ease-in-out` decelerates into the loop boundary so the
+   restart reads as a stutter a couple of seconds in. A linear transform runs
+   on the compositor and both endpoints sit fully off-box, so the wrap is
+   invisible. */
+.absent::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -150%;
+  width: 150%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.16) 50%,
+    transparent 100%
+  );
+  animation: twinkle 2.6s linear infinite;
+  animation-play-state: var(--shimmer);
+}
+@keyframes twinkle {
+  from { transform: translateX(0); }
+  /* 166.67% of a 150%-wide box == 2.5x the box width: fully clear on both
+     sides, so there is no visible jump when the keyframes wrap. */
+  to { transform: translateX(166.67%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .absent::after { animation: none; opacity: 0.5; }
+}
+.absent span {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  padding: 8px;
+  text-align: center;
+}
+
+/* ---- file / voice rows ------------------------------------------------- */
+
+.file-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 2px;
+  min-width: 200px;
+}
+.file-row .glyph {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: var(--on-accent);
+  flex: none;
+}
+.file-row .glyph svg { width: 18px; height: 18px; }
+.file-row .info { min-width: 0; }
+.file-row .info b {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.file-row .info span { font-size: 12px; opacity: 0.7; }
+
+/* ---- service messages -------------------------------------------------- */
+
+.service {
+  align-self: center;
+  margin: 8px 0;
+  padding: 4px 11px;
+  border-radius: var(--radius-pill);
+  background: var(--scrim);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-size: 12px;
+  color: var(--text);
+}
+
+/* ---- group chats -------------------------------------------------------- */
+
+/* A fixed gutter on incoming rows keeps every bubble on the same left edge,
+   whether or not this particular row is the one showing the face. */
+.msg-gutter {
+  width: 32px;
+  flex: none;
+  margin-right: 7px;
+  display: flex;
+  align-items: flex-end;
+}
+.msg-face {
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--spring-fast);
+}
+.msg-face:hover { transform: scale(1.08); }
+
+.sender.clickable { cursor: pointer; }
+.sender.clickable:hover { text-decoration: underline; }
+
+.forwarded {
+  font-size: 12.5px;
+  margin-bottom: 2px;
+  color: var(--text-dim);
+}
+.forwarded b { font-weight: 600; }
+
+/* Reaction pills carry the faces of who reacted -- in a group the emoji alone
+   tells you nothing. */
+.reaction-faces { display: flex; align-items: center; }
+.reaction-faces .avatar {
+  width: 16px;
+  height: 16px;
+  font-size: 8px;
+  border: 1.5px solid var(--bubble-in);
+  box-sizing: content-box;
+}
+.out .reaction-faces .avatar { border-color: var(--bubble-out); }
+/* Overlap them so a busy reaction stays compact. */
+.reaction-faces .avatar + .avatar { margin-left: -6px; }
+.reaction-emoji { line-height: 1; }

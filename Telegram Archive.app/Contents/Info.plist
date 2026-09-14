@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleName</key>                  <string>Telegram Archive</string>
+  <key>CFBundleDisplayName</key>           <string>Telegram Archive</string>
+  <key>CFBundleIdentifier</key>            <string>local.telegram.archive</string>
+  <key>CFBundleVersion</key>               <string>1.2</string>
+  <key>CFBundleShortVersionString</key>    <string>1.2</string>
+  <key>CFBundlePackageType</key>           <string>APPL</string>
+  <key>CFBundleExecutable</key>            <string>TelegramArchive</string>
+  <key>CFBundleIconFile</key>              <string>AppIcon</string>
+  <key>LSMinimumSystemVersion</key>        <string>10.15</string>
+  <!-- The window is the browser; this process is only the local server. -->
+  <key>LSBackgroundOnly</key>              <false/>
+  <key>NSHighResolutionCapable</key>       <true/>
+
+  <!-- Why these exist, since they read like boilerplate and are not:
+
+       macOS will not ASK for one of these locations unless the app states a
+       reason for wanting it. With no matching key the request is refused
+       outright, no prompt is ever shown, and the app never appears in System
+       Settings > Privacy & Security > Files and Folders -- so there is nothing
+       to switch on even for someone who goes looking for it. That is the dead
+       end an external drive lands you in.
+
+       Declaring them grants nothing by itself. It only makes the request
+       visible, so the answer is the user's rather than a silent no. -->
+  <key>NSRemovableVolumesUsageDescription</key>
+  <string>Telegram Archive reads your chat exports from this drive. It only ever reads them; nothing is written or changed.</string>
+  <key>NSNetworkVolumesUsageDescription</key>
+  <string>Telegram Archive reads your chat exports from this network drive. It only ever reads them; nothing is written or changed.</string>
+  <key>NSDocumentsFolderUsageDescription</key>
+  <string>Telegram Archive reads your chat exports from your Documents folder. It only ever reads them; nothing is written or changed.</string>
+  <key>NSDesktopFolderUsageDescription</key>
+  <string>Telegram Archive reads your chat exports from your Desktop. It only ever reads them; nothing is written or changed.</string>
+  <key>NSDownloadsFolderUsageDescription</key>
+  <string>Telegram Archive reads your chat exports from your Downloads folder. It only ever reads them; nothing is written or changed.</string>
+
+  <!-- Cloud storage (Synology Drive, iCloud Drive, Dropbox, OneDrive, Google
+       Drive) appears under ~/Library/CloudStorage and is guarded by a service
+       of its own -- not by any of the folder permissions above. Without this
+       key a folder there fails with "Operation not permitted" and the app is
+       never listed anywhere the user could grant it. -->
+  <key>NSFileProviderDomainUsageDescription</key>
+  <string>Telegram Archive reads your chat exports from your cloud storage folder. It only ever reads them; nothing is written or changed.</string>
+  <key>NSFileProviderPresenceUsageDescription</key>
+  <string>Telegram Archive needs to see which cloud storage folders exist so it can read your chat exports from one.</string>
+</dict>
+</plist>
