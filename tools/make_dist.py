@@ -32,7 +32,7 @@ EXCLUDE_NAMES = {
     # would otherwise be the one third-party name in a shipped file.
     "make_dist.py", "make_guide.py", "make_icon.py", "make_fixtures.py",
     # The repository's own tooling and paperwork, not the program.
-    "privacy_audit.py", "build_site.py", "GITHUB-GUIDE.md",
+    "privacy_audit.py", "build_site.py", "install_hooks.py", "GITHUB-GUIDE.md",
 }
 EXCLUDE_SUFFIXES = {".pyc", ".pyo", ".log"}
 
