@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -88,8 +89,18 @@ def main(argv=None) -> int:
     worker.write_text(text.replace(stamp, f"const VERSION = '{version}';"),
                       encoding="utf-8")
 
+    # A custom domain, if one is configured. It lives in the PAGES_CNAME
+    # repository variable rather than in the code, so the repo never has to
+    # carry a personal domain name -- and every deploy re-asserts it, so the
+    # domain is never lost when the site is rebuilt. GitHub Pages reads this
+    # CNAME file from the published site.
+    cname = os.environ.get("PAGES_CNAME", "").strip()
+    if cname:
+        (out / "CNAME").write_text(cname + "\n", encoding="utf-8")
+
     print(f"built {out.relative_to(APP_DIR) if out.is_relative_to(APP_DIR) else out}: "
-          f"{len(shell) + 1} files, version {version}")
+          f"{len(shell) + 1} files, version {version}"
+          + (f", domain {cname}" if cname else ""))
 
     audit = subprocess.run(
         [sys.executable, str(APP_DIR / "tools" / "privacy_audit.py"), "--dir", str(out)])

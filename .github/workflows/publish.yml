@@ -41,6 +41,9 @@ jobs:
         run: python -m unittest discover -s tools/tests -t . -v
       - name: Build the website
         run: python tools/build_site.py
+        env:
+          # Set once the custom domain's DNS is ready; empty means no domain.
+          PAGES_CNAME: ${{ vars.PAGES_CNAME }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
